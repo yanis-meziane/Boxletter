@@ -11,7 +11,6 @@ const PORT = 3001;
 app.use(cors());
 app.use(express.json());
 
-// Configuration PostgreSQL
 const pool = new Pool({
   user: 'postgres',
   host: '127.0.0.1',
@@ -33,29 +32,25 @@ pool.connect((err, client, release) => {
 // Route d'inscription
 app.post('/api/register', async (req, res) => {
   const { firstname, lastname, email, password } = req.body;
-
+    const role = req.body.role || 'user';
   try {
-    // Vérifier si l'utilisateur existe déjà
     const checkUser = await pool.query(
       'SELECT * FROM users WHERE email = $1',
       [email]
     );
 
     if (checkUser.rows.length > 0) {
-      return res.status(400).json({ 
-        success: false, 
-        message: 'Cet email est déjà utilisé' 
+      return res.status(400).json({
+        success: false,
+        message: 'Cet email est déjà utilisé'
       });
     }
 
-    // Hasher le mot de passe
-    const saltRounds = 10;
-    const hashedPassword = await bcrypt.hash(password, saltRounds);
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Insérer le nouvel utilisateur
     const result = await pool.query(
-      'INSERT INTO users (firstname, lastname, email, mdp) VALUES ($1, $2, $3, $4) RETURNING userid, firstname, lastname, email',
-      [firstname, lastname, email, hashedPassword]
+      'INSERT INTO users (firstname, lastname, email, mdp, role) VALUES ($1, $2, $3, $4, $5) RETURNING userid, firstname, lastname, email, role',
+      [firstname, lastname, email, hashedPassword, role]
     );
 
     res.status(201).json({
@@ -65,11 +60,8 @@ app.post('/api/register', async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Erreur lors de l\'inscription:', error);
-    res.status(500).json({ 
-      success: false, 
-      message: 'Erreur serveur lors de l\'inscription' 
-    });
+    console.error(error);
+    res.status(500).json({ success: false, message: 'Erreur serveur' });
   }
 });
 
@@ -78,49 +70,30 @@ app.post('/api/login', async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    // Rechercher l'utilisateur
     const result = await pool.query(
-      'SELECT * FROM users WHERE email = $1',
+      'SELECT userid, firstname, lastname, email, mdp, role FROM users WHERE email = $1',
       [email]
     );
 
     if (result.rows.length === 0) {
-      return res.status(401).json({ 
-        success: false, 
-        message: 'Email ou mot de passe incorrect' 
-      });
+      return res.status(401).json({ success: false, message: 'Email ou mot de passe incorrect' });
     }
 
     const user = result.rows[0];
-
-    // Vérifier le mot de passe
     const isPasswordValid = await bcrypt.compare(password, user.mdp);
 
     if (!isPasswordValid) {
-      return res.status(401).json({ 
-        success: false, 
-        message: 'Email ou mot de passe incorrect' 
-      });
+      return res.status(401).json({ success: false, message: 'Email ou mot de passe incorrect' });
     }
 
-    // Connexion réussie
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
-      message: 'Connexion réussie',
-      user: {
-        userid: user.userid,
-        firstname: user.firstname,
-        lastname: user.lastname,
-        email: user.email
-      }
+      type: user.role
     });
 
   } catch (error) {
-    console.error('Erreur lors de la connexion:', error);
-    res.status(500).json({ 
-      success: false, 
-      message: 'Erreur serveur lors de la connexion' 
-    });
+    console.error(error);
+    res.status(500).json({ success: false, message: 'Erreur serveur' });
   }
 });
 
@@ -130,5 +103,5 @@ app.get('/api/test', (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log('Server listen on http://localhost:', '', PORT);
+  console.log(`Server listen on http://localhost:${PORT}`);
 });
