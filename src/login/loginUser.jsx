@@ -36,13 +36,13 @@ export default function Login() {
         const data = await response.json();
 
         if (data.success) {
-            localStorage.setItem("type", data.type);
+            localStorage.setItem("type", data.type.trim());
             setSuccess('Connexion réussie !');
-
             setTimeout(() => {
                 console.log(data.type);
                 if (data.type === "admin") {
-                    navigate('/admin');      
+                    navigate('/admin'); 
+                    console.log('Je suis ici')     
                 } else {
                     navigate('/main');       
                 }
