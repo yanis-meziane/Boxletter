@@ -1,26 +1,96 @@
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 export default function Login() {
+    const [formData, setFormData] = useState({
+        email: '',
+        password: ''
+    });
+    const [error, setError] = useState('');
+    const [success, setSuccess] = useState('');
+    const navigate = useNavigate();
+
+    const handleChange = (e) => {
+        setFormData({
+            ...formData,
+            [e.target.name]: e.target.value
+        });
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setError('');
+        setSuccess('');
+
+        try {
+            const response = await fetch('http://localhost:3001/api/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData)
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                setSuccess('Connexion réussie !');
+                localStorage.setItem('user', JSON.stringify(data.user));
+                setTimeout(() => {
+                   navigate('/main')
+                    console.log('Utilisateur connecté:', data.user);
+                }, 1500);
+            } else {
+                setError(data.message || 'Erreur lors de la connexion');
+            }
+        } catch (error) {
+            console.error('Erreur:', error);
+            setError('Erreur de connexion au serveur');
+        }
+    };
+
     return (
         <div>
-             <form action="" method="post">
-                   
-                    <label htmlFor="mail">Mail : </label>
-                    <input type="email" name="mail" id="mail" placeholder="Votre mail... " minLength={1} maxLength={30}/>
+            <form onSubmit={handleSubmit}>
+                <label htmlFor="email">Mail : </label>
+                <input
+                    type="email"
+                    name="email"
+                    id="email"
+                    placeholder="Votre mail..."
+                    minLength={1}
+                    maxLength={30}
+                    value={formData.email}
+                    onChange={handleChange}
+                    required
+                />
+                <br />
+                <br />
 
-            <br />
-            <br />
-                    <label htmlFor="Mot de passe">Mot de passe : </label>
-                    <input type="password" name="password" id="password" required min={8} placeholder="Votre mot de passe..."/>
-            <br />
-            <br />
+                <label htmlFor="password">Mot de passe : </label>
+                <input
+                    type="password"
+                    name="password"
+                    id="password"
+                    placeholder="Votre mot de passe..."
+                    value={formData.password}
+                    onChange={handleChange}
+                    required
+                />
+                <br />
+                <br />
 
-                    <input type="button" value="Valider" id="registerButton" />
+                
 
-                    <p>
-                        Si vous n'avez pas de compte, <Link to="/">inscrivez vous</Link>
-                    </p>
-                </form>
+                {error && <p style={{ color: 'red' }}>{error}</p>}
+                {success && <p style={{ color: 'green' }}>{success}</p>}
+
+                <button type="submit">Valider</button>
+
+                <p>
+                    Si vous n'avez pas de compte, <Link to="/register">inscrivez vous</Link>
+                </p>
+            </form>
         </div>
     );
 }
