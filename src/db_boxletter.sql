@@ -37,8 +37,9 @@
 		INSERT INTO users VALUES
 	(1,'test', 'test', 'test@test.test','user123');
 
-	SELECT * FROM admin;
+	
 	SELECT * FROM users;
+	SELECT * FROM movies
 
 	CREATE TABLE movies
 	(
@@ -46,6 +47,36 @@
 		titre VARCHAR(30),
 		genre VARCHAR(30),
 		rate INTEGER,
-		adminID INTEGER REFERENCES admin(adminID),
 		userID INTEGER REFERENCES users(userID)
-	);
+	); 
+
+
+CREATE TABLE IF NOT EXISTS ratings
+(
+    ratingID SERIAL PRIMARY KEY,
+    moviesID INTEGER REFERENCES movies(moviesID) ON DELETE CASCADE,
+    userID INTEGER REFERENCES users(userID) ON DELETE CASCADE,
+    rate INTEGER CHECK (rate >= 1 AND rate <= 5),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(moviesID, userID)
+);
+SELECT * FROM movies;
+
+SELECT * FROM ratings;
+ALTER TABLE movies ADD COLUMN description TEXT;
+
+CREATE OR REPLACE VIEW movie_ratings AS
+SELECT 
+    m.moviesID,
+    m.titre,
+    m.genre,
+    COUNT(r.ratingID) as total_ratings
+	FROM movies m
+	LEFT JOIN ratings r ON m.moviesID = r.moviesID
+	GROUP BY m.moviesID, m.titre, m.genre;
+
+	
+
+
+
+	  

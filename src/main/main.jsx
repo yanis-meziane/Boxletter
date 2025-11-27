@@ -149,8 +149,15 @@ export default function Main() {
                                 <div className="average-rating">
                                     <span className="rating-label">Note moyenne :</span>
                                     <span className="rating-value">
-                                        {movie.rate ? `${movie.rate}/5` : 'Pas encore noté'}
+                                        {movie.total_ratings > 0 
+                                            ? `${parseFloat(movie.average_rating).toFixed(1)}/5` 
+                                            : 'Pas encore noté'}
                                     </span>
+                                    {movie.total_ratings > 0 && (
+                                        <span className="votes-count">
+                                            ({movie.total_ratings} {movie.total_ratings > 1 ? 'votes' : 'vote'})
+                                        </span>
+                                    )}
                                 </div>
                             </div>
 
