@@ -28,11 +28,10 @@ pool.connect((err, client, release) => {
     release();
   }
 });
-
-// Route d'inscription
 app.post('/api/register', async (req, res) => {
   const { firstname, lastname, email, password } = req.body;
-    const role = req.body.role || 'user';
+  const role = req.body.role || 'user';
+  
   try {
     const checkUser = await pool.query(
       'SELECT * FROM users WHERE email = $1',
@@ -88,7 +87,168 @@ app.post('/api/login', async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      type: user.role
+      type: user.role,
+      userId: user.userid,
+      firstname: user.firstname
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: 'Erreur serveur' });
+  }
+});
+
+app.post('/api/movies', async (req, res) => {
+  const { titre, genre, rate, userId, description} = req.body;
+
+  try {
+
+    const userCheck = await pool.query(
+      'SELECT role FROM users WHERE userid = $1',
+      [userId]
+    );
+
+    if (userCheck.rows.length === 0 || userCheck.rows[0].role !== 'admin') {
+      return res.status(403).json({
+        success: false,
+        message: 'Accès refusé. Seuls les admins peuvent ajouter des films.'
+      });
+    }
+
+    const result = await pool.query(
+      'INSERT INTO movies (titre, genre, rate, description) VALUES ($1, $2, $3, $4) RETURNING *',
+      [titre, genre, rate, description]
+    );
+
+    res.status(201).json({
+      success: true,
+      message: 'Film ajouté avec succès',
+      movie: result.rows[0]
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: 'Erreur serveur' });
+  }
+});
+
+app.get('/api/movies', async (req, res) => {
+  try {
+    const result = await pool.query(`
+      SELECT 
+        m.moviesid,
+        m.titre,
+        m.genre,
+        m.rate
+        COUNT(r.ratingid) as total_ratings
+      FROM movies m
+      GROUP BY m.moviesid, m.titre, m.genre, m.created_at
+      ORDER BY m.created_at DESC
+    `);
+
+    res.json({
+      success: true,
+      movies: result.rows
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: 'Erreur serveur' });
+  }
+});
+
+app.delete('/api/movies/:id', async (req, res) => {
+  const { id } = req.params;
+  const { userId } = req.body;
+
+  try {
+    const userCheck = await pool.query(
+      'SELECT role FROM users WHERE userid = $1',
+      [userId]
+    );
+
+    if (userCheck.rows.length === 0 || userCheck.rows[0].role !== 'admin') {
+      return res.status(403).json({
+        success: false,
+        message: 'Accès refusé.'
+      });
+    }
+
+    const result = await pool.query(
+      'DELETE FROM movies WHERE moviesid = $1 RETURNING *',
+      [id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'Film non trouvé'
+      });
+    }
+
+    res.json({
+      success: true,
+      message: 'Film supprimé avec succès'
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: 'Erreur serveur' });
+  }
+});
+
+app.post('/api/ratings', async (req, res) => {
+  const { movieId, userId, rate } = req.body;
+
+  try {
+    const existingRating = await pool.query(
+      'SELECT * FROM ratings WHERE moviesid = $1 AND userid = $2',
+      [movieId, userId]
+    );
+
+    if (existingRating.rows.length > 0) {
+      const result = await pool.query(
+        'UPDATE ratings SET rate = $1 WHERE moviesid = $2 AND userid = $3 RETURNING *',
+        [rate, movieId, userId]
+      );
+
+      return res.json({
+        success: true,
+        message: 'Note mise à jour',
+        rating: result.rows[0]
+      });
+    }
+
+    const result = await pool.query(
+      'INSERT INTO ratings (moviesid, userid, rate) VALUES ($1, $2, $3) RETURNING *',
+      [movieId, userId, rate]
+    );
+
+    res.status(201).json({
+      success: true,
+      message: 'Film noté avec succès',
+      rating: result.rows[0]
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: 'Erreur serveur' });
+  }
+});
+
+// Récupérer la note d'un utilisateur pour un film
+app.get('/api/ratings/:movieId/:userId', async (req, res) => {
+  const { movieId, userId } = req.params;
+
+  try {
+    const result = await pool.query(
+      'SELECT * FROM ratings WHERE moviesid = $1 AND userid = $2',
+      [movieId, userId]
+    );
+
+    res.json({
+      success: true,
+      rating: result.rows[0] || null
     });
 
   } catch (error) {

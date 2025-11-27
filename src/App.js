@@ -15,7 +15,7 @@ import FormFilm from "./admin/formFilm"
           <Route path="/login" element={<Login />} />
           <Route path="/main" element={<Main />} />
           <Route path="/admin" element={<Admin />} />
-          <Route path='/ajoutFilm' element={<FormFilm />} />
+          <Route path='/movies' element={<FormFilm />} />
         </Routes>
       </BrowserRouter>
     );

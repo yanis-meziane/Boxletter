@@ -2,8 +2,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 
 export default function Login() {
-
-    
     const [formData, setFormData] = useState({
         email: '',
         password: ''
@@ -19,47 +17,47 @@ export default function Login() {
         });
     };
 
-   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError('');
-    setSuccess('');
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setError('');
+        setSuccess('');
 
-    try {
-        const response = await fetch('http://localhost:3001/api/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(formData)
-        });
+        try {
+            const response = await fetch('http://localhost:3001/api/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData)
+            });
 
-        const data = await response.json();
+            const data = await response.json();
 
-        if (data.success) {
-            localStorage.setItem("type", data.type.trim());
-            setSuccess('Connexion réussie !');
-            setTimeout(() => {
-                console.log(data.type);
-                if (data.type === "admin") {
-                    navigate('/admin'); 
-                    console.log('Je suis ici')     
-                } else {
-                    navigate('/main');       
-                }
-            }, 500);
+            if (data.success) {
+                // Stocker les informations utilisateur
+                localStorage.setItem("type", data.type.trim());
+                localStorage.setItem("userId", data.userId);
+                localStorage.setItem("firstname", data.firstname);
+                
+                setSuccess('Connexion réussie !');
+                
+                setTimeout(() => {
+                    if (data.type === "admin") {
+                        navigate('/admin');
+                    } else {
+                        navigate('/main');
+                    }
+                }, 500);
 
-        } else {
-            setError(data.message || 'Erreur lors de la connexion');
+            } else {
+                setError(data.message || 'Erreur lors de la connexion');
+            }
+
+        } catch (error) {
+            console.error('Erreur:', error);
+            setError('Erreur de connexion au serveur');
         }
-
-    } catch (error) {
-        console.error('Erreur:', error);
-        setError('Erreur de connexion au serveur');
-    }
-};
-
-
-    
+    };
 
     return (
         <div>
@@ -91,8 +89,6 @@ export default function Login() {
                 />
                 <br />
                 <br />
-            
-                
 
                 {error && <p style={{ color: 'red' }}>{error}</p>}
                 {success && <p style={{ color: 'green' }}>{success}</p>}
