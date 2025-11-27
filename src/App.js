@@ -4,6 +4,7 @@ import Register from "./register/register"
 import Home from "./Home/Home"
 import Main from "./main/main"
 import Admin from "./admin/admin"
+import FormFilm from "./admin/formFilm"
 
   function App() {
     return (
@@ -14,6 +15,7 @@ import Admin from "./admin/admin"
           <Route path="/login" element={<Login />} />
           <Route path="/main" element={<Main />} />
           <Route path="/admin" element={<Admin />} />
+          <Route path='/ajoutFilm' element={<FormFilm />} />
         </Routes>
       </BrowserRouter>
     );

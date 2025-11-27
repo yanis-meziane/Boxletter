@@ -1,8 +1,15 @@
+import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
+
 export default function Admin(){
     return(
         <div>
-            <p>Vous êtes connecté à la page admin</p>
-            <h1>Je suis ici</h1>
+           <h1>Je suis le Dashboard</h1>
+
+            <p>La liste des films sont ici</p>
+
+            <p>Si vous voulez rajouter un film c'est <Link to="/ajoutFilm">ici</Link></p>
+
         </div>
     )
 }
