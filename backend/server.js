@@ -28,6 +28,7 @@ pool.connect((err, client, release) => {
     release();
   }
 });
+
 app.post('/api/register', async (req, res) => {
   const { firstname, lastname, email, password } = req.body;
   const role = req.body.role || 'user';
@@ -99,10 +100,9 @@ app.post('/api/login', async (req, res) => {
 });
 
 app.post('/api/movies', async (req, res) => {
-  const { titre, genre, rate, userId, description} = req.body;
+  const { titre, genre, userId, description} = req.body;
 
   try {
-
     const userCheck = await pool.query(
       'SELECT role FROM users WHERE userid = $1',
       [userId]
@@ -116,8 +116,8 @@ app.post('/api/movies', async (req, res) => {
     }
 
     const result = await pool.query(
-      'INSERT INTO movies (titre, genre, rate, description) VALUES ($1, $2, $3, $4) RETURNING *',
-      [titre, genre, rate, description]
+      'INSERT INTO movies (titre, genre, description) VALUES ($1, $2, $3) RETURNING *',
+      [titre, genre, description]
     );
 
     res.status(201).json({
@@ -132,6 +132,7 @@ app.post('/api/movies', async (req, res) => {
   }
 });
 
+// Récupérer tous les films avec les statistiques de notation
 app.get('/api/movies', async (req, res) => {
   try {
     const result = await pool.query(`
@@ -139,9 +140,13 @@ app.get('/api/movies', async (req, res) => {
         m.moviesid,
         m.titre,
         m.genre,
-        m.rate
+        m.description,
+        COALESCE(AVG(r.rate), 0) as average_rating,
+        COUNT(r.rate) as total_ratings
       FROM movies m
-      GROUP BY m.moviesid, m.titre, m.genre
+      LEFT JOIN ratings r ON m.moviesid = r.moviesid
+      GROUP BY m.moviesid, m.titre, m.genre, m.description
+      ORDER BY m.moviesid DESC
     `);
 
     res.json({
@@ -172,6 +177,10 @@ app.delete('/api/movies/:id', async (req, res) => {
       });
     }
 
+    // Supprimer d'abord les ratings associés
+    await pool.query('DELETE FROM ratings WHERE moviesid = $1', [id]);
+
+    // Puis supprimer le film
     const result = await pool.query(
       'DELETE FROM movies WHERE moviesid = $1 RETURNING *',
       [id]
@@ -195,16 +204,19 @@ app.delete('/api/movies/:id', async (req, res) => {
   }
 });
 
+// Ajouter ou mettre à jour une note
 app.post('/api/ratings', async (req, res) => {
   const { movieId, userId, rate } = req.body;
 
   try {
+    // Vérifier si l'utilisateur a déjà noté ce film
     const existingRating = await pool.query(
       'SELECT * FROM ratings WHERE moviesid = $1 AND userid = $2',
       [movieId, userId]
     );
 
     if (existingRating.rows.length > 0) {
+      // Mettre à jour la note existante
       const result = await pool.query(
         'UPDATE ratings SET rate = $1 WHERE moviesid = $2 AND userid = $3 RETURNING *',
         [rate, movieId, userId]
@@ -217,6 +229,7 @@ app.post('/api/ratings', async (req, res) => {
       });
     }
 
+    // Créer une nouvelle note
     const result = await pool.query(
       'INSERT INTO ratings (moviesid, userid, rate) VALUES ($1, $2, $3) RETURNING *',
       [movieId, userId, rate]

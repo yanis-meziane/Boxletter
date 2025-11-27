@@ -22,12 +22,12 @@ export default function Main() {
     const fetchMovies = async () => {
         try {
             const response = await fetch('http://localhost:3001/api/movies');
-
             const data = await response.json();
 
             if (data.success) {
                 setMovies(data.movies);
-                data.movies.forEach(movie => fetchUserRating(movie.movieid));
+                // Utiliser moviesid au lieu de movieid
+                data.movies.forEach(movie => fetchUserRating(movie.moviesid));
             } else {
                 setError('Erreur lors du chargement des films');
             }
@@ -51,7 +51,7 @@ export default function Main() {
                 }));
             }
         } catch (error) {
-            console.error('Erreur:', error);
+            console.error('Erreur lors de la récupération de la note:', error);
         }
     };
 
@@ -132,7 +132,7 @@ export default function Main() {
             ) : (
                 <div className="movies-grid">
                     {filteredMovies.map((movie) => (
-                        <div key={movie.movieid} className="movie-card">
+                        <div key={movie.moviesid} className="movie-card">
                             <div className="movie-header">
                                 <h3 className="movie-title">{movie.titre}</h3>
                             </div>
@@ -149,31 +149,28 @@ export default function Main() {
                                 <div className="average-rating">
                                     <span className="rating-label">Note moyenne :</span>
                                     <span className="rating-value">
-                                        ⭐ {parseFloat(movie.average_rating).toFixed(1)}/5
-                                    </span>
-                                    <span className="votes-count">
-                                        ({movie.total_ratings} {movie.total_ratings > 1 ? 'votes' : 'vote'})
+                                        {movie.rate ? `${movie.rate}/5` : 'Pas encore noté'}
                                     </span>
                                 </div>
                             </div>
 
                             <div className="rating-section">
                                 <p className="rating-label">Votre note :</p>
-                                <div className="stars">
+                                <div className="rating-buttons">
                                     {[1, 2, 3, 4, 5].map((star) => (
                                         <button
                                             key={star}
-                                            onClick={() => handleRate(movie.movieid, star)}
-                                            className={`star-btn ${userRatings[movie.movieid] >= star ? 'active' : ''}`}
+                                            onClick={() => handleRate(movie.moviesid, star)}
+                                            className={`rating-btn ${userRatings[movie.moviesid] === star ? 'active' : ''}`}
                                             title={`Noter ${star}/5`}
                                         >
-                                            {userRatings[movie.movieid] >= star ? '⭐' : '☆'}
+                                            {star}
                                         </button>
                                     ))}
                                 </div>
-                                {userRatings[movie.movieid] && (
+                                {userRatings[movie.moviesid] && (
                                     <p className="user-rating-text">
-                                        Vous avez noté : {userRatings[movie.movieid]}/5
+                                        Vous avez noté : {userRatings[movie.moviesid]}/5
                                     </p>
                                 )}
                             </div>

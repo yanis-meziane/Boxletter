@@ -102,24 +102,30 @@ export default function Admin() {
                                     <th>Titre</th>
                                     <th>Genre</th>
                                     <th>Note moyenne</th>
-                                    <th>Nb de votes</th>
+                                    <th>Nombre de votes</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {movies.map((movie) => (
-                                    <tr key={movie.movieid}>
+                                    <tr key={movie.moviesid}>
                                         <td className="movie-title">{movie.titre}</td>
                                         <td>{movie.genre}</td>
                                         <td>
                                             <span className="rating-badge">
-                                                ⭐ {parseFloat(movie.average_rating).toFixed(1)}
+                                                {movie.total_ratings > 0 
+                                                    ? `${parseFloat(movie.average_rating).toFixed(1)}/5` 
+                                                    : 'Non noté'}
                                             </span>
                                         </td>
-                                        <td>{movie.total_ratings}</td>
+                                        <td>
+                                            <span className="votes-badge">
+                                                {movie.total_ratings || 0}
+                                            </span>
+                                        </td>
                                         <td>
                                             <button
-                                                onClick={() => handleDelete(movie.movieid)}
+                                                onClick={() => handleDelete(movie.moviesid)}
                                                 className="btn-delete"
                                             >
                                                 Supprimer
