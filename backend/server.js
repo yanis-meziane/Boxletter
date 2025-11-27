@@ -140,10 +140,8 @@ app.get('/api/movies', async (req, res) => {
         m.titre,
         m.genre,
         m.rate
-        COUNT(r.ratingid) as total_ratings
       FROM movies m
-      GROUP BY m.moviesid, m.titre, m.genre, m.created_at
-      ORDER BY m.created_at DESC
+      GROUP BY m.moviesid, m.titre, m.genre
     `);
 
     res.json({

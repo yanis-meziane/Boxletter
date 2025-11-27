@@ -135,7 +135,6 @@ export default function Main() {
                         <div key={movie.movieid} className="movie-card">
                             <div className="movie-header">
                                 <h3 className="movie-title">{movie.titre}</h3>
-                                <span className="movie-year">{movie.annee}</span>
                             </div>
 
                             <div className="movie-genre">

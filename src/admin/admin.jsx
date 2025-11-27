@@ -101,7 +101,6 @@ export default function Admin() {
                                 <tr>
                                     <th>Titre</th>
                                     <th>Genre</th>
-                                    <th>Année</th>
                                     <th>Note moyenne</th>
                                     <th>Nb de votes</th>
                                     <th>Actions</th>
