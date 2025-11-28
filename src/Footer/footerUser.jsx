@@ -1,8 +1,16 @@
+import '../Footer/footerUser.css'
+import Privacy from './privacyUser'
+
 export default function Footer(){
     return(
-        <div>
+        <div id='footer'>
             <footer>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Vitae facilis ducimus dignissimos, aut ratione aliquid accusantium labore. Assumenda, natus consequuntur! Nobis inventore provident amet repellendus molestiae corrupti unde architecto dolorum.
+               <div id='copyright'>
+                    <p>Copyright 2025 - Tous droits réservés.  | </p>
+               </div>
+               <div id='privacy'>
+                <Privacy></Privacy>
+                </div> 
             </footer>
         </div>
     )

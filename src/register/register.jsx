@@ -102,7 +102,7 @@ export default function Register() {
                     type="password"
                     name="password"
                     id="password"
-                    pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
+                    pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{12,}$"
                     title="Doit contenir au minimum 8 caractères avec 1 majuscule, une minuscule, un caractère spécial et un chiffre"
                     placeholder="Votre mot de passe..."
                     value={formData.password}

@@ -5,6 +5,7 @@ import Home from "./Home/Home"
 import Main from "./main/main"
 import Admin from "./admin/admin"
 import FormFilm from "./admin/formFilm"
+import "./App.css"
 
   function App() {
     return (

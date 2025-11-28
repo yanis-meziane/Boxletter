@@ -1,0 +1,22 @@
+#footer {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+}
+
+footer{
+    display: flex;
+    justify-content: space-around;
+    text-align: center;
+    background-color: aliceblue;
+}
+footer > #copyright {
+    display: flex;
+    align-items: center;
+}
+
+footer > #privacy {
+    display: flex;
+    width: 50%;
+    align-items: center;
+}
