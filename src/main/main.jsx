@@ -26,7 +26,6 @@ export default function Main() {
 
             if (data.success) {
                 setMovies(data.movies);
-                // Utiliser moviesid au lieu de movieid
                 data.movies.forEach(movie => fetchUserRating(movie.moviesid));
             } else {
                 setError('Erreur lors du chargement des films');
