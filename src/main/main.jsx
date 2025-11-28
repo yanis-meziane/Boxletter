@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import "./main.css";
 import Footer from "../Footer/footerUser";
@@ -185,6 +185,8 @@ export default function Main() {
                     ))}
                 </div>
             )}
+
+             <p>Si vous voulez avoir plus d'information sur vos droits <Link to={'/privacy'}>Cliquez ici</Link></p>
         </div><Footer /></>
     );
     

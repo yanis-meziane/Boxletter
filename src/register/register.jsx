@@ -126,6 +126,8 @@ export default function Register() {
                     Si vous avez déjà un compte, <Link to="/login">connectez vous</Link>
                 </p>
             </form>
+
+             <p>Si vous voulez avoir plus d'information sur vos droits <Link to={'/privacy'}>Cliquez ici</Link></p>
         </div>
     );
 }

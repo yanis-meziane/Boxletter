@@ -5,6 +5,7 @@ import Home from "./Home/Home"
 import Main from "./main/main"
 import Admin from "./admin/admin"
 import FormFilm from "./admin/formFilm"
+import Privacy from "./Footer/privacyUser";
 import "./App.css"
 
   function App() {
@@ -16,7 +17,8 @@ import "./App.css"
           <Route path="/login" element={<Login />} />
           <Route path="/main" element={<Main />} />
           <Route path="/admin" element={<Admin />} />
-          <Route path='/movies' element={<FormFilm />} />
+          <Route path="/movies" element={<FormFilm />} />
+          <Route path="/privacy" element={<Privacy />} />
         </Routes>
       </BrowserRouter>
     );

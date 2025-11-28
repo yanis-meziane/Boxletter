@@ -9,6 +9,7 @@ footer{
     justify-content: space-around;
     text-align: center;
     background-color: aliceblue;
+    width: 100%;
 }
 footer > #copyright {
     display: flex;
@@ -17,6 +18,5 @@ footer > #copyright {
 
 footer > #privacy {
     display: flex;
-    width: 50%;
     align-items: center;
 }
