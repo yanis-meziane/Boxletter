@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import "./main.css";
+import Footer from "../Footer/footerUser";
 
 export default function Main() {
     const [movies, setMovies] = useState([]);
@@ -100,7 +101,7 @@ export default function Main() {
     }
 
     return (
-        <div className="main-container">
+        <><div className="main-container">
             <header className="main-header">
                 <h1>🎬 BoxLetter</h1>
                 <button onClick={handleLogout} className="btn-logout">
@@ -112,9 +113,9 @@ export default function Main() {
 
             <div className="filter-section">
                 <label htmlFor="genre-filter">Filtrer par genre :</label>
-                <select 
+                <select
                     id="genre-filter"
-                    value={filterGenre} 
+                    value={filterGenre}
                     onChange={(e) => setFilterGenre(e.target.value)}
                     className="genre-select"
                 >
@@ -148,8 +149,8 @@ export default function Main() {
                                 <div className="average-rating">
                                     <span className="rating-label">Note moyenne :</span>
                                     <span className="rating-value">
-                                        {movie.total_ratings > 0 
-                                            ? `${parseFloat(movie.average_rating).toFixed(1)}/5` 
+                                        {movie.total_ratings > 0
+                                            ? `${parseFloat(movie.average_rating).toFixed(1)}/5`
                                             : 'Pas encore noté'}
                                     </span>
                                     {movie.total_ratings > 0 && (
@@ -184,6 +185,7 @@ export default function Main() {
                     ))}
                 </div>
             )}
-        </div>
+        </div><Footer /></>
     );
+    
 }
