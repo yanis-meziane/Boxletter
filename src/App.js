@@ -5,13 +5,13 @@ import Home from "./Home/Home"
 import Main from "./main/main"
 import Admin from "./admin/admin"
 import FormFilm from "./admin/formFilm"
-import Layout from "./layout/layout";
+import Footer from "./Footer/footerUser";
 
   function App() {
     return (
       <BrowserRouter>
         <Routes>
-          <Route element={<Layout />} />
+          <Route element={<Footer />} />
           <Route path="/" element={<Home />} />
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />

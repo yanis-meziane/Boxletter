@@ -1,4 +1,4 @@
-export default function Layout(){
+export default function Footer(){
     return(
         <div>
             <footer>
