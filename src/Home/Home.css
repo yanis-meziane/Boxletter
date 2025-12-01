@@ -1,6 +1,7 @@
 a{
     text-decoration: none;
     color: black;
+    font-style: italic;
 }
 
 a:hover{
@@ -15,13 +16,26 @@ main{
     height: 100%;
     width: 100%;
     align-items: center;
+    justify-content: center;
+    background-color:azure
 }
 
 #sectionUser{
     text-align: center;
+    display: flex;
+    flex-direction: column;
     justify-content: center;
-    margin-top: 1vh;
-    border: 1px solid black;
+    align-items: center;
+    gap: 2vh;
+    padding: 4vh;
+    border: 1px solid #ddd;
+    border-radius: 2vh;
     width: 50%;
-    height: 100%;
+    background-color: white;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1),
+                0 5px 30px rgba(0, 0, 0, 0.1);
+}
+
+#sectionUser article {
+    width: 100%;
 }
