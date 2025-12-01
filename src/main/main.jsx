@@ -18,6 +18,7 @@ export default function Main() {
             return;
         }
         fetchMovies();
+        // eslint-disable-next-line
     }, [navigate, userId]);
 
     const fetchMovies = async () => {

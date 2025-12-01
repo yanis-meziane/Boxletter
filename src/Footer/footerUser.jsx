@@ -1,6 +1,6 @@
 import '../Footer/footerUser.css'
 import { Link } from 'react-router-dom'
-import Privacy from './privacyUser'
+
 
 export default function Footer(){
     return(
