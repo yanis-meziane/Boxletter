@@ -10,7 +10,7 @@ a:hover{
     padding: 0.5vh;
     color: white;
 }
-main{
+#Home{
     display: flex;
     flex-direction: column;
     height: 100%;

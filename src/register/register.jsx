@@ -1,5 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import "./register.css"
 
 export default function Register() {
     const [formData, setFormData] = useState({
@@ -51,76 +52,80 @@ export default function Register() {
 
     return (
         <div>
-            <form onSubmit={handleSubmit}>
-                <label htmlFor="firstname">Prénom : </label>
-                <input
-                    type="text"
-                    name="firstname"
-                    id="firstname"
-                    placeholder="Votre prénom..."
-                    minLength={1}
-                    maxLength={30}
-                    value={formData.firstname}
-                    onChange={handleChange}
-                    required
-                />
-                <br />
-                <br />
+            <main id="mainRegister">
+                <form onSubmit={handleSubmit} id="formRegister">
 
-                <label htmlFor="lastname">Nom de famille : </label>
-                <input
-                    type="text"
-                    name="lastname"
-                    id="lastname"
-                    placeholder="Votre nom de famille..."
-                    minLength={1}
-                    maxLength={30}
-                    value={formData.lastname}
-                    onChange={handleChange}
-                    required
-                />
-                <br />
-                <br />
+                    <article>
+                        <label htmlFor="firstname">Prénom : </label>
+                            <input
+                                type="text"
+                                name="firstname"
+                                id="firstname"
+                                placeholder="Votre prénom..."
+                                minLength={1}
+                                maxLength={30}
+                                value={formData.firstname}
+                                onChange={handleChange}
+                                required
+                            />
+                    </article>
+                        
+                    <article>
+                         <label htmlFor="lastname">Nom de famille : </label>
+                            <input
+                                type="text"
+                                name="lastname"
+                                id="lastname"
+                                placeholder="Votre nom de famille..."
+                                minLength={1}
+                                maxLength={30}
+                                value={formData.lastname}
+                                onChange={handleChange}
+                                required
+                            />
+                    </article>
 
-                <label htmlFor="email">Mail : </label>
-                <input
-                    type="email"
-                    name="email"
-                    id="email"
-                    placeholder="Votre mail..."
-                    minLength={1}
-                    maxLength={30}
-                    value={formData.email}
-                    onChange={handleChange}
-                    required
-                />
-                <br />
-                <br />
+                        <article>
+                            <label htmlFor="email">Mail : </label>
+                                <input
+                                    type="email"
+                                    name="email"
+                                    id="email"
+                                    placeholder="Votre mail..."
+                                    minLength={1}
+                                    maxLength={30}
+                                    value={formData.email}
+                                    onChange={handleChange}
+                                    required
+                                />
+                        </article>
 
-                <label htmlFor="password">Mot de passe : </label>
-                <input
-                    type="password"
-                    name="password"
-                    id="password"
-                    pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{12,}$"
-                    title="Doit contenir au minimum 8 caractères avec 1 majuscule, une minuscule, un caractère spécial et un chiffre"
-                    placeholder="Votre mot de passe..."
-                    value={formData.password}
-                    onChange={handleChange}
-                    required
-                />
-                <br />
-                <br />
-
+                    <article>
+                        <label htmlFor="password">Mot de passe : </label>
+                            <input
+                                type="password"
+                                name="password"
+                                id="password"
+                                pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{12,}$"
+                                title="Doit contenir au minimum 8 caractères avec 1 majuscule, une minuscule, un caractère spécial et un chiffre"
+                                placeholder="Votre mot de passe..."
+                                value={formData.password}
+                                onChange={handleChange}
+                                required
+                            />
+                    </article>
+                
                 {error && <p style={{ color: 'red' }}>{error}</p>}
                 {success && <p style={{ color: 'green' }}>{success}</p>}
 
-                <button type="submit">Valider</button>
-
-                <div>
+                <article>
+                    <button type="submit" id="submitRegister">Valider</button>
+                </article>
+                <article>
                      <input type="checkbox" name="checkbox" id="RGPD" required/> 
-                    <p>Accepter les RGPD <div id="requiredCheckboxRGPD">*</div></p> 
-                </div>
+                     <p>Accepter les RGPD <div id="requiredCheckboxRGPD">*</div></p>
+                </article>
+                    
 
                 <p>
                     Si vous avez déjà un compte, <Link to="/login">connectez vous</Link>
@@ -128,6 +133,8 @@ export default function Register() {
             </form>
 
              <p>Si vous voulez avoir plus d'information sur vos droits <Link to={'/privacy'}>Cliquez ici</Link></p>
-        </div>
+        
+            </main>
+           </div> 
     );
 }

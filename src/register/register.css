@@ -1,0 +1,23 @@
+#mainRegister{
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+}
+
+#formRegister{
+    flex-direction: column;
+    margin: 1vh;
+    align-items: center;
+}
+
+#formRegister > article{
+    margin: 1vh;
+}
+
+#formRegister > #submitRegister {
+    width: 100%;
+    align-items: center;
+}

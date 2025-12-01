@@ -4,7 +4,7 @@ import "./Home.css"
 export default function Home() {
     return (
         <div>
-            <main>
+            <main id="Home">
                 <section id="sectionUser">
                     <article> 
                         <p>
