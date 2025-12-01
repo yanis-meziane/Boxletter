@@ -1,0 +1,27 @@
+a{
+    text-decoration: none;
+    color: black;
+}
+
+a:hover{
+    background-color: gray;
+    border-radius: 2vh;
+    padding: 0.5vh;
+    color: white;
+}
+main{
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    align-items: center;
+}
+
+#sectionUser{
+    text-align: center;
+    justify-content: center;
+    margin-top: 1vh;
+    border: 1px solid black;
+    width: 50%;
+    height: 100%;
+}
