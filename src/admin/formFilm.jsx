@@ -39,7 +39,7 @@ export default function FormFilm() {
                 },
                 body: JSON.stringify({
                     ...formData,
-                    userId: parseInt(userId)
+                    userId: Number.parseInt(userId)
                 })
             });
 

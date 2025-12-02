@@ -5,11 +5,12 @@ a{
 }
 
 a:hover{
-    background-color: gray;
     border-radius: 2vh;
     padding: 0.5vh;
-    color: white;
+    color: #595959; 
+    background-color: #ffffff;
 }
+
 #Home{
     display: flex;
     flex-direction: column;

@@ -48,7 +48,7 @@ export default function Admin() {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ userId: parseInt(userId) })
+                body: JSON.stringify({ userId: Number.parseInt(userId) })
             });
 
             const data = await response.json();
@@ -114,7 +114,7 @@ export default function Admin() {
                                         <td>
                                             <span className="rating-badge">
                                                 {movie.total_ratings > 0 
-                                                    ? `${parseFloat(movie.average_rating).toFixed(1)}/5` 
+                                                    ? `${Number.parseFloat(movie.average_rating).toFixed(1)}/5` 
                                                     : 'Non noté'}
                                             </span>
                                         </td>

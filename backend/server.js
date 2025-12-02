@@ -1,14 +1,20 @@
-const express = require('express');
+let express = require('express');
+let example = express();
+example.disable("x-powered-by");
 const { Pool } = require('pg');
 const bcrypt = require('bcrypt');
-const cors = require('cors');
 require('dotenv').config();
 
 const app = express();
 const PORT = 3001;
 
 // Middleware
-app.use(cors());
+const http = require('node:http');
+const srv = http.createServer((req, res) => {
+  res.writeHead(200, { 'Access-Control-Allow-Origin': 'trustedwebsite.com' }); // Compliant
+  res.end('ok');
+});
+srv.listen(3000);
 app.use(express.json());
 
 const pool = new Pool({

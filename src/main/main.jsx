@@ -64,9 +64,9 @@ export default function Main() {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    movieId: parseInt(movieId),
-                    userId: parseInt(userId),
-                    rate: parseInt(rate)
+                    movieId: Number.parseInt(movieId),
+                    userId: Number.parseInt(userId),
+                    rate: Number.parseInt(rate)
                 })
             });
 
@@ -151,7 +151,7 @@ export default function Main() {
                                     <span className="rating-label">Note moyenne :</span>
                                     <span className="rating-value">
                                         {movie.total_ratings > 0
-                                            ? `${parseFloat(movie.average_rating).toFixed(1)}/5`
+                                            ? `${Number.parseFloat(movie.average_rating).toFixed(1)}/5`
                                             : 'Pas encore noté'}
                                     </span>
                                     {movie.total_ratings > 0 && (
