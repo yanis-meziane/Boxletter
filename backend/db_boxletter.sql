@@ -21,7 +21,7 @@
 			email VARCHAR(20),
 			mdp VARCHAR(255),
 			role VARCHAR(10)
-		)
+		);
 
 	CREATE TABLE movies
 	(

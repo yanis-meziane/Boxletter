@@ -18,11 +18,11 @@ app.use(express.json());
 
 // Configuration PostgreSQL
 const pool = new Pool({
-  user: 'postgres',
-  host: '127.0.0.1',
-  database: 'db_boxletter',
-  password: 'SkyPepito2025',
-  port: 5433,
+  user: process.env.DB_USER,
+  host: process.env.DB_HOST,
+  database: process.env.DB_NAME,
+  password: process.env.DB_PASSWORD,
+  port: process.env.DB_PORT,
 });
 
 // Test de connexion
