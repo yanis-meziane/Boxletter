@@ -13,33 +13,15 @@
     CONNECTION LIMIT = -1
     IS_TEMPLATE = False;*/ 
 
-	CREATE TABLE admin 
-	(
-		adminID SERIAL PRIMARY KEY,
-		firstname VARCHAR(50),
-		lastname VARCHAR(50), 
-		email VARCHAR(20),
-		mdp VARCHAR(255)
-	);
-
-	INSERT INTO admin VALUES
-	(1,'test', 'test', 'test@test.test','admin123');
-
 	CREATE TABLE users
 		(
 			userID SERIAL PRIMARY KEY,
 			firstname VARCHAR(50),
 			lastname VARCHAR(50),
 			email VARCHAR(20),
-			mdp VARCHAR(255)
+			mdp VARCHAR(255),
+			role VARCHAR(10)
 		)
-
-		INSERT INTO users VALUES
-	(1,'test', 'test', 'test@test.test','user123');
-
-	
-	SELECT * FROM users;
-	SELECT * FROM movies
 
 	CREATE TABLE movies
 	(
@@ -60,10 +42,6 @@ CREATE TABLE IF NOT EXISTS ratings
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     UNIQUE(moviesID, userID)
 );
-SELECT * FROM movies;
-
-SELECT * FROM ratings;
-ALTER TABLE movies ADD COLUMN description TEXT;
 
 CREATE OR REPLACE VIEW movie_ratings AS
 SELECT 
