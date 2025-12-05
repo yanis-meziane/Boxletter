@@ -37,7 +37,7 @@
         npm install
     ``` 
 
-    3. **Lancement du projet** 
+3. **Lancement du projet** 
 
         Une fois toutes les dépendances installées, il sera nécessaire d'ouvrir un deuxième Terminal pour lancer le projet et lancer le serveur. 
 
