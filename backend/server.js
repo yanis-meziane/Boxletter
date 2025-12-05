@@ -7,9 +7,8 @@ require('dotenv').config();
 const app = express();
 const PORT = 3001;
 
-// Configuration CORS - IMPORTANT
 app.use(cors({
-  origin: 'http://localhost:3000', // L'URL de votre frontend React
+  origin: 'http://localhost:3000', 
   credentials: true
 }));
 
@@ -35,17 +34,46 @@ pool.connect((err, client, release) => {
   }
 });
 
+const checkAdminRole = async (req, res, next) => {
+  const userId = req.body.userId; 
+
+  if (!userId) {
+    return res.status(401).json({ success: false, message: 'Non authentifié. ID utilisateur manquant.' });
+  }
+
+  try {
+    const userCheck = await pool.query(
+      'SELECT role FROM users WHERE userid = $1',
+      [userId]
+    );
+
+    if (userCheck.rows.length === 0) {
+      return res.status(404).json({ success: false, message: 'Utilisateur non trouvé.' });
+    }
+    if (userCheck.rows[0].role.trim() !== 'admin') {
+      return res.status(403).json({
+        success: false,
+        message: 'Accès refusé. Réservé aux administrateurs.'
+      });
+    }
+    next();
+
+  } catch (error) {
+    console.error('Erreur dans le middleware checkAdminRole:', error);
+    res.status(500).json({ success: false, message: 'Erreur serveur lors de la vérification des permissions.' });
+  }
+};
+
 // Route de test
 app.get('/api/test', (req, res) => {
   res.json({ message: 'API fonctionne correctement' });
 });
 
-// Route d'inscription
 app.post('/api/register', async (req, res) => {
-  const { firstname, lastname, email, password } = req.body;
-  const role = req.body.role || 'user';
+  const { firstname, lastname, email, password } = req.body; 
   
   try {
+    // Vérifier si l'email existe déjà
     const checkUser = await pool.query(
       'SELECT * FROM users WHERE email = $1',
       [email]
@@ -57,7 +85,11 @@ app.post('/api/register', async (req, res) => {
         message: 'Cet email est déjà utilisé'
       });
     }
-
+    const userCount = await pool.query('SELECT COUNT(*) FROM users');
+    const totalUsers = parseInt(userCount.rows[0].count);
+    
+    
+    const role = totalUsers === 0 ? 'admin' : 'user'; 
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const result = await pool.query(
@@ -67,7 +99,9 @@ app.post('/api/register', async (req, res) => {
 
     res.status(201).json({
       success: true,
-      message: 'Utilisateur créé avec succès',
+      message: role === 'admin' 
+        ? 'Félicitations ! Vous êtes le premier utilisateur et avez été défini comme administrateur.' 
+        : 'Utilisateur créé avec succès',
       user: result.rows[0]
     });
 
@@ -100,7 +134,7 @@ app.post('/api/login', async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      type: user.role,
+      type: user.role.trim(),
       userId: user.userid,
       firstname: user.firstname
     });
@@ -111,23 +145,9 @@ app.post('/api/login', async (req, res) => {
   }
 });
 
-// Ajouter un film
-app.post('/api/movies', async (req, res) => {
-  const { titre, genre, userId} = req.body;
-
+app.post('/api/movies', checkAdminRole, async (req, res) => {
+  const { titre, genre } = req.body; 
   try {
-    const userCheck = await pool.query(
-      'SELECT role FROM users WHERE userid = $1',
-      [userId]
-    );
-
-    if (userCheck.rows.length === 0 || userCheck.rows[0].role !== 'admin') {
-      return res.status(403).json({
-        success: false,
-        message: 'Accès refusé. Seuls les admins peuvent ajouter des films.'
-      });
-    }
-
     const result = await pool.query(
       'INSERT INTO movies (titre, genre) VALUES ($1, $2) RETURNING *',
       [titre, genre]
@@ -145,7 +165,8 @@ app.post('/api/movies', async (req, res) => {
   }
 });
 
-// Récupérer tous les films avec les statistiques de notation
+// Récupérer tous les films 
+
 app.get('/api/movies', async (req, res) => {
   try {
     const result = await pool.query(`
@@ -172,25 +193,17 @@ app.get('/api/movies', async (req, res) => {
   }
 });
 
-// Supprimer un film
-app.delete('/api/movies/:id', async (req, res) => {
+// Supprimer un film - UTILISE LE MIDDLEWARE
+app.delete('/api/movies/:id', checkAdminRole, async (req, res) => {
   const { id } = req.params;
-  const { userId } = req.body;
+  // userId est dans req.body et vérifié par le middleware
 
   try {
-    const userCheck = await pool.query(
-      'SELECT role FROM users WHERE userid = $1',
-      [userId]
-    );
-
-    if (userCheck.rows.length === 0 || userCheck.rows[0].role !== 'admin') {
-      return res.status(403).json({
-        success: false,
-        message: 'Accès refusé.'
-      });
-    }
-
+    // La vérification du rôle est déjà faite par checkAdminRole.
+    
+    // Supprimer d'abord les notes associées
     await pool.query('DELETE FROM ratings WHERE moviesid = $1', [id]);
+    
     const result = await pool.query(
       'DELETE FROM movies WHERE moviesid = $1 RETURNING *',
       [id]
@@ -275,51 +288,6 @@ app.get('/api/ratings/:movieId/:userId', async (req, res) => {
   }
 });
 
-// Route d'inscription
-app.post('/api/register', async (req, res) => {
-  const { firstname, lastname, email, password } = req.body;
-  
-  try {
-    // Vérifier si l'email existe déjà
-    const checkUser = await pool.query(
-      'SELECT * FROM users WHERE email = $1',
-      [email]
-    );
-
-    if (checkUser.rows.length > 0) {
-      return res.status(400).json({
-        success: false,
-        message: 'Cet email est déjà utilisé'
-      });
-    }
-
-    // Vérifier s'il y a déjà des utilisateurs dans la base
-    const userCount = await pool.query('SELECT COUNT(*) FROM users');
-    const totalUsers = parseInt(userCount.rows[0].count);
-    
-    // Le premier utilisateur devient admin, les autres sont users
-    const role = totalUsers === 0 ? 'admin' : 'user';
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    const result = await pool.query(
-      'INSERT INTO users (firstname, lastname, email, mdp, role) VALUES ($1, $2, $3, $4, $5) RETURNING userid, firstname, lastname, email, role',
-      [firstname, lastname, email, hashedPassword, role]
-    );
-
-    res.status(201).json({
-      success: true,
-      message: role === 'admin' 
-        ? 'Félicitations ! Vous êtes le premier utilisateur et avez été défini comme administrateur.' 
-        : 'Utilisateur créé avec succès',
-      user: result.rows[0]
-    });
-
-  } catch (error) {
-    console.error('Erreur inscription:', error);
-    res.status(500).json({ success: false, message: 'Erreur serveur' });
-  }
-});
 
 app.listen(PORT, () => {
   console.log(`Server listen on http://localhost:${PORT}`);
