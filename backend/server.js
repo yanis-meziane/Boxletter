@@ -275,6 +275,52 @@ app.get('/api/ratings/:movieId/:userId', async (req, res) => {
   }
 });
 
+// Route d'inscription
+app.post('/api/register', async (req, res) => {
+  const { firstname, lastname, email, password } = req.body;
+  
+  try {
+    // Vérifier si l'email existe déjà
+    const checkUser = await pool.query(
+      'SELECT * FROM users WHERE email = $1',
+      [email]
+    );
+
+    if (checkUser.rows.length > 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'Cet email est déjà utilisé'
+      });
+    }
+
+    // Vérifier s'il y a déjà des utilisateurs dans la base
+    const userCount = await pool.query('SELECT COUNT(*) FROM users');
+    const totalUsers = parseInt(userCount.rows[0].count);
+    
+    // Le premier utilisateur devient admin, les autres sont users
+    const role = totalUsers === 0 ? 'admin' : 'user';
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const result = await pool.query(
+      'INSERT INTO users (firstname, lastname, email, mdp, role) VALUES ($1, $2, $3, $4, $5) RETURNING userid, firstname, lastname, email, role',
+      [firstname, lastname, email, hashedPassword, role]
+    );
+
+    res.status(201).json({
+      success: true,
+      message: role === 'admin' 
+        ? 'Félicitations ! Vous êtes le premier utilisateur et avez été défini comme administrateur.' 
+        : 'Utilisateur créé avec succès',
+      user: result.rows[0]
+    });
+
+  } catch (error) {
+    console.error('Erreur inscription:', error);
+    res.status(500).json({ success: false, message: 'Erreur serveur' });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`Server listen on http://localhost:${PORT}`);
 });
