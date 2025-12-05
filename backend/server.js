@@ -153,7 +153,6 @@ app.get('/api/movies', async (req, res) => {
         m.moviesid,
         m.titre,
         m.genre,
-        m.description,
         COALESCE(AVG(r.rate), 0) as average_rating,
         COUNT(r.rate) as total_ratings
       FROM movies m
