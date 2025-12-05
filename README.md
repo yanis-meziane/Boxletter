@@ -62,4 +62,4 @@
 
     Et le projet devrait se lancer correctement ! Vous pourrez ainsi vous connecter à votre page user et noter les films posté par nos admins !  
 
-    **NB : Dans Server.js, il faudra mettre le MDP de votre DB à la ligne 23**
+    **NB : Dans Server.js (backend/server.js), il faudra mettre le MDP de votre DB à la ligne 23**
