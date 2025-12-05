@@ -39,26 +39,23 @@
 
 3. **Lancement du projet** 
 
-        Une fois toutes les dépendances installées, il sera nécessaire d'ouvrir un deuxième Terminal pour lancer le projet et lancer le serveur. 
+    Une fois toutes les dépendances installées, il sera nécessaire d'ouvrir un deuxième Terminal pour lancer le projet et lancer le serveur. 
 
-        Donc dans un premier terminal, il faudra lancer cette commande : 
-
-        ```bash 
+    Donc dans un premier terminal, il faudra lancer cette commande : 
+        ```
             cd backend
             node server.js
         ```
 
-        Et vous devriez avoir comme message : 
-
+    Et vous devriez avoir comme message : 
         ```
             Server listen on http://localhost:3001
             Vous êtes bien connecté à PostgreSQL
         ```
 
-        Sur le deuxième terminal, dans le dossier parent (donc Boxletter), il faudra lancer cette commande : 
-
+    Sur le deuxième terminal, dans le dossier parent (donc Boxletter), il faudra lancer cette commande : 
         ```
-            npm run start
+         npm run start
         ```
 
-        Et le projet devrait se lancer correctement ! Vous pourrez ainsi vous connecter à votre page user et noter les films posté par nos admins ! 
+    Et le projet devrait se lancer correctement ! Vous pourrez ainsi vous connecter à votre page user et noter les films posté par nos admins ! 
