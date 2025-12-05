@@ -33,7 +33,7 @@
 
     * Une fois accédé à ce dossier, procéder à l'installation des dépendances.  
 
-    ```bash
+    ```
         npm install
     ``` 
 
@@ -50,14 +50,14 @@
 
         Et vous devriez avoir comme message : 
 
-        ```bash 
+        ```
             Server listen on http://localhost:3001
             Vous êtes bien connecté à PostgreSQL
         ```
 
         Sur le deuxième terminal, dans le dossier parent (donc Boxletter), il faudra lancer cette commande : 
 
-        ```bash 
+        ```
             npm run start
         ```
 
