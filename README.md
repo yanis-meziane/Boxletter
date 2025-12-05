@@ -39,7 +39,9 @@
 
 3. **Lancement du projet** 
 
-    Une fois toutes les dépendances installées, il sera nécessaire d'ouvrir un deuxième Terminal pour lancer le projet et lancer le serveur. 
+    Une fois toutes les dépendances installées, il sera nécessaire d'ouvrir un deuxième Terminal pour lancer le projet et lancer le serveur.  
+
+    *NB : Il est important de créer la DB sur PostgreSQL. Il faudra créer toutes les tables avec les commandes présentes dans le fichier. Une fois la DB lancée, suivre les étapes suivantes*
 
     Donc dans un premier terminal, il faudra lancer cette commande : 
         ```
