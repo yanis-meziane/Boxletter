@@ -113,7 +113,7 @@ app.post('/api/login', async (req, res) => {
 
 // Ajouter un film
 app.post('/api/movies', async (req, res) => {
-  const { titre, genre, userId, description} = req.body;
+  const { titre, genre, userId} = req.body;
 
   try {
     const userCheck = await pool.query(
@@ -129,8 +129,8 @@ app.post('/api/movies', async (req, res) => {
     }
 
     const result = await pool.query(
-      'INSERT INTO movies (titre, genre, description) VALUES ($1, $2, $3) RETURNING *',
-      [titre, genre, description]
+      'INSERT INTO movies (titre, genre) VALUES ($1, $2) RETURNING *',
+      [titre, genre]
     );
 
     res.status(201).json({
