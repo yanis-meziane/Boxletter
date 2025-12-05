@@ -157,7 +157,7 @@ app.get('/api/movies', async (req, res) => {
         COUNT(r.rate) as total_ratings
       FROM movies m
       LEFT JOIN ratings r ON m.moviesid = r.moviesid
-      GROUP BY m.moviesid, m.titre, m.genre, m.description
+      GROUP BY m.moviesid, m.titre, m.genre
       ORDER BY m.moviesid DESC
     `);
 
