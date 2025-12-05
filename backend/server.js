@@ -1,6 +1,5 @@
-let express = require('express');
-let example = express();
-example.disable("x-powered-by");
+const express = require('express');
+const cors = require('cors');
 const { Pool } = require('pg');
 const bcrypt = require('bcrypt');
 require('dotenv').config();
@@ -8,15 +7,16 @@ require('dotenv').config();
 const app = express();
 const PORT = 3001;
 
+// Configuration CORS - IMPORTANT
+app.use(cors({
+  origin: 'http://localhost:3000', // L'URL de votre frontend React
+  credentials: true
+}));
+
 // Middleware
-const http = require('node:http');
-const srv = http.createServer((req, res) => {
-  res.writeHead(200, { 'Access-Control-Allow-Origin': 'trustedwebsite.com' }); // Compliant
-  res.end('ok');
-});
-srv.listen(3000);
 app.use(express.json());
 
+// Configuration PostgreSQL
 const pool = new Pool({
   user: 'postgres',
   host: '127.0.0.1',
@@ -35,6 +35,12 @@ pool.connect((err, client, release) => {
   }
 });
 
+// Route de test
+app.get('/api/test', (req, res) => {
+  res.json({ message: 'API fonctionne correctement' });
+});
+
+// Route d'inscription
 app.post('/api/register', async (req, res) => {
   const { firstname, lastname, email, password } = req.body;
   const role = req.body.role || 'user';
@@ -66,7 +72,7 @@ app.post('/api/register', async (req, res) => {
     });
 
   } catch (error) {
-    console.error(error);
+    console.error('Erreur inscription:', error);
     res.status(500).json({ success: false, message: 'Erreur serveur' });
   }
 });
@@ -100,11 +106,12 @@ app.post('/api/login', async (req, res) => {
     });
 
   } catch (error) {
-    console.error(error);
+    console.error('Erreur connexion:', error);
     res.status(500).json({ success: false, message: 'Erreur serveur' });
   }
 });
 
+// Ajouter un film
 app.post('/api/movies', async (req, res) => {
   const { titre, genre, userId, description} = req.body;
 
@@ -133,7 +140,7 @@ app.post('/api/movies', async (req, res) => {
     });
 
   } catch (error) {
-    console.error(error);
+    console.error('Erreur ajout film:', error);
     res.status(500).json({ success: false, message: 'Erreur serveur' });
   }
 });
@@ -161,11 +168,12 @@ app.get('/api/movies', async (req, res) => {
     });
 
   } catch (error) {
-    console.error(error);
+    console.error('Erreur récupération films:', error);
     res.status(500).json({ success: false, message: 'Erreur serveur' });
   }
 });
 
+// Supprimer un film
 app.delete('/api/movies/:id', async (req, res) => {
   const { id } = req.params;
   const { userId } = req.body;
@@ -183,10 +191,7 @@ app.delete('/api/movies/:id', async (req, res) => {
       });
     }
 
-    // Supprimer d'abord les ratings associés
     await pool.query('DELETE FROM ratings WHERE moviesid = $1', [id]);
-
-    // Puis supprimer le film
     const result = await pool.query(
       'DELETE FROM movies WHERE moviesid = $1 RETURNING *',
       [id]
@@ -205,7 +210,7 @@ app.delete('/api/movies/:id', async (req, res) => {
     });
 
   } catch (error) {
-    console.error(error);
+    console.error('Erreur suppression film:', error);
     res.status(500).json({ success: false, message: 'Erreur serveur' });
   }
 });
@@ -215,14 +220,12 @@ app.post('/api/ratings', async (req, res) => {
   const { movieId, userId, rate } = req.body;
 
   try {
-    // Vérifier si l'utilisateur a déjà noté ce film
     const existingRating = await pool.query(
       'SELECT * FROM ratings WHERE moviesid = $1 AND userid = $2',
       [movieId, userId]
     );
 
     if (existingRating.rows.length > 0) {
-      // Mettre à jour la note existante
       const result = await pool.query(
         'UPDATE ratings SET rate = $1 WHERE moviesid = $2 AND userid = $3 RETURNING *',
         [rate, movieId, userId]
@@ -235,7 +238,6 @@ app.post('/api/ratings', async (req, res) => {
       });
     }
 
-    // Créer une nouvelle note
     const result = await pool.query(
       'INSERT INTO ratings (moviesid, userid, rate) VALUES ($1, $2, $3) RETURNING *',
       [movieId, userId, rate]
@@ -248,7 +250,7 @@ app.post('/api/ratings', async (req, res) => {
     });
 
   } catch (error) {
-    console.error(error);
+    console.error('Erreur notation:', error);
     res.status(500).json({ success: false, message: 'Erreur serveur' });
   }
 });
@@ -269,14 +271,9 @@ app.get('/api/ratings/:movieId/:userId', async (req, res) => {
     });
 
   } catch (error) {
-    console.error(error);
+    console.error('Erreur récupération note:', error);
     res.status(500).json({ success: false, message: 'Erreur serveur' });
   }
-});
-
-// Route de test
-app.get('/api/test', (req, res) => {
-  res.json({ message: 'API fonctionne correctement' });
 });
 
 app.listen(PORT, () => {
